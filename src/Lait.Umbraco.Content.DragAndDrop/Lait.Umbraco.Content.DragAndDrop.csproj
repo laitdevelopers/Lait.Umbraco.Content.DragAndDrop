@@ -14,7 +14,7 @@
     <!-- NuGet / Marketplace metadata (used by `dotnet pack`) -->
     <PackageId>Lait.Umbraco.Content.DragAndDrop</PackageId>
     <Title>Lait Umbraco Content Drag and Drop</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Anders Bootsmann</Authors>
     <Description>Native HTML5 drag-and-drop and keyboard reordering for the Umbraco 17/18 backoffice Content tree, plus the ability to drag an item out of a collection (list view) and drop it anywhere in the content tree. Three-zone (above / into / below) drop targets, optimistic same-parent reorder, full cross-parent move, a move-in-progress spinner, and WCAG-compliant keyboard "grab &amp; place". Pure App_Plugins package — no C# code.</Description>
     <PackageTags>umbraco umbraco-marketplace umbraco-17 umbraco-18 backoffice tree collection list-view drag-and-drop</PackageTags>
