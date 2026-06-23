@@ -1,0 +1,15 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "PackageType": "Package",
+  "Category": "Editor Tools",
+  "Title": "Lait Umbraco Content Drag and Drop",
+  "Description": "Drag-and-drop and keyboard reordering for the Umbraco backoffice Content tree, plus the ability to drag an item out of a collection (list view) and drop it anywhere in the content tree. Three-zone drop targets, cross-parent moves, a move-in-progress spinner and WCAG-compliant keyboard grab & place.",
+  "LicenseTypes": [ "Free" ],
+  "Tags": [ "drag-and-drop", "tree", "collection", "list-view", "backoffice", "editor-tools" ],
+  "AuthorDetails": {
+    "Name": "Lait Developers",
+    "Url": "https://github.com/laitdevelopers",
+    "ImageUrl": "https://github.com/laitdevelopers.png",
+    "SyncContributorsFromRepository": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "../umbraco-package-schema.json",
+  "id": "Lait.Umbraco.Content.DragAndDrop",
+  "name": "Lait Umbraco Content Drag and Drop",
+  "version": "1.0.0",
+  "extensions": [
+    {
+      "name": "Content Drag and Drop",
+      "alias": "Lait.Umbraco.Content.DragAndDrop.ContentDragDrop",
+      "type": "backofficeEntryPoint",
+      "js": "/App_Plugins/LaitContentDnd/content-drag-drop.js",
+      "conditions": [{ "alias": "Umb.Condition.SectionAlias", "match": "Umb.Section.Content" }]
+    }
+  ]
+}

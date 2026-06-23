@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Serve everything under wwwroot at /App_Plugins/LaitContentDnd.
+         This is how Umbraco 17 discovers the umbraco-package.json from a referenced
+         Razor Class Library (works for project references AND NuGet, no manual copy). -->
+    <StaticWebAssetBasePath>App_Plugins/LaitContentDnd</StaticWebAssetBasePath>
+
+    <!-- NuGet / Marketplace metadata (used by `dotnet pack`) -->
+    <PackageId>Lait.Umbraco.Content.DragAndDrop</PackageId>
+    <Title>Lait Umbraco Content Drag and Drop</Title>
+    <Version>1.0.0</Version>
+    <Authors>Anders Bootsmann</Authors>
+    <Description>Native HTML5 drag-and-drop and keyboard reordering for the Umbraco 17/18 backoffice Content tree, plus the ability to drag an item out of a collection (list view) and drop it anywhere in the content tree. Three-zone (above / into / below) drop targets, optimistic same-parent reorder, full cross-parent move, a move-in-progress spinner, and WCAG-compliant keyboard "grab &amp; place". Pure App_Plugins package — no C# code.</Description>
+    <PackageTags>umbraco umbraco-marketplace umbraco-17 umbraco-18 backoffice tree collection list-view drag-and-drop</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- The Marketplace fetches umbraco-marketplace.json from the repo root of this URL. -->
+    <PackageProjectUrl>https://github.com/laitdevelopers/Lait.Umbraco.Content.DragAndDrop</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/laitdevelopers/Lait.Umbraco.Content.DragAndDrop</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- This is a pure App_Plugins package with no C# code, so it needs no Umbraco
+         assembly to build. But the Umbraco Marketplace derives a package's supported
+         version range from its Umbraco.Cms.* dependency range, so a direct (min-only)
+         dependency on the lightest Umbraco package makes it discoverable and badges it
+         as v17+. Adjust to match your installed Umbraco. -->
+    <PackageReference Include="Umbraco.Cms.Core" Version="17.0.0" />
+  </ItemGroup>
+
+  <!-- Include README + icon in the NuGet package. Static web assets under wwwroot are packed automatically. -->
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+    <Content Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Don't include the client source as part of the nuget / static-web-assets build -->
+    <Content Remove="Client\**" />
+    <!-- Keep the manifest source visible in the solution (built copy ships under wwwroot) -->
+    <None Include="Client\public\umbraco-package.json" Pack="false" />
+  </ItemGroup>
+
+  <!-- Build the backoffice client (npm run build) before building this project.
+       Skipped during IDE design-time builds to avoid running npm on every keystroke. -->
+  <Target Name="BuildBackofficeClient" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' And '$(BuildingProject)' == 'true'">
+    <Message Importance="high" Text="Installing backoffice client dependencies (npm install)..." Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules')" />
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)\Client" Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules')" />
+    <Message Importance="high" Text="Building backoffice client (npm run build)..." />
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\Client" />
+  </Target>
+
+</Project>
