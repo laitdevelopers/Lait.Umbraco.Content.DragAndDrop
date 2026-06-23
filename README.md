@@ -10,6 +10,8 @@ collection (list view) and drop it anywhere in the content tree.**
 - **Drag from a collection / list view → drop on the tree** — move children out of a list-view
   page that the tree itself never renders
 - **Move-in-progress spinner** on the node being moved
+- **"Moved X into/above/below Y" toast** in the bottom-right after each successful move
+  (Umbraco's own notification stack)
 - **Keyboard-accessible reordering** (ARIA "grab & place") — WCAG 2.2 AA, with screen-reader
   announcements
 - Hover-to-expand collapsed branches mid-drag

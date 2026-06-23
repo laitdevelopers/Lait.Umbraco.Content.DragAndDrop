@@ -41,6 +41,8 @@ interface DragState {
   // pipeline skips tree-only optimistic DOM reordering.
   fromCollection?: boolean;
   sourceEl?: HTMLElement | null;
+  // Display name of the dragged node, captured at drag start for the "moved" toast.
+  sourceName?: string | null;
 }
 
 export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
@@ -163,7 +165,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData(DRAG_MIME, sourceUnique);
 
-    this.#dragState = { sourceUnique, sourceParentUnique, descendantUniques };
+    this.#dragState = { sourceUnique, sourceParentUnique, descendantUniques, sourceName: this.#targetName(el) };
   }
 
   // Start a drag from a collection (list-view) entry. The source document isn't
@@ -193,6 +195,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
       descendantUniques,
       fromCollection: true,
       sourceEl: source.el,
+      sourceName: source.name,
     };
   }
 
@@ -269,6 +272,10 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
     const sourceParentUnique = this.#dragState.sourceParentUnique;
     const targetParentUnique = readParentUnique(el);
     const fromCollection = this.#dragState.fromCollection === true;
+    // Names for the "moved" feedback toast, captured before any await/reload
+    // can detach the elements.
+    const sourceName = this.#dragState.sourceName ?? 'item';
+    const targetName = this.#targetName(el);
 
     // Find the source DOM element so we can do an optimistic move on success.
     // For a collection drag the source isn't a tree item, so fall back to the
@@ -293,6 +300,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
         // events so the data store updates and the chevron appears.
         await this.#reload(sourceParentUnique);
         await this.#reload(targetUnique);
+        this.#showMoved(sourceName, targetName, zone);
         return;
       }
 
@@ -311,6 +319,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
         if (fromCollection) {
           await this.#sort(targetParentUnique, newOrder);
           await this.#reload(targetParentUnique);
+          this.#showMoved(sourceName, targetName, zone);
           return;
         }
 
@@ -335,6 +344,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
           }
           throw err; // outer catch shows toast
         }
+        this.#showMoved(sourceName, targetName, zone);
         return;
       }
 
@@ -362,6 +372,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
         // its hasChildren updated). Reload both branches.
         await this.#reload(sourceParentUnique);
         await this.#reload(targetParentUnique);
+        this.#showMoved(sourceName, targetName, zone);
       } catch (sortErr) {
         await this.#reload(sourceParentUnique);
         await this.#reload(targetParentUnique);
@@ -435,7 +446,7 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
       // cycle guard work identically to the pointer-drag path.
       const sourceParentUnique = readParentUnique(el);
       const descendantUniques = collectDescendantUniques(el);
-      this.#dragState = { sourceUnique, sourceParentUnique, descendantUniques };
+      this.#dragState = { sourceUnique, sourceParentUnique, descendantUniques, sourceName: this.#targetName(el) };
 
       const { candidates, els } = this.#buildCandidates();
       const sourceIndex = candidates.findIndex((c) => c.unique === sourceUnique);
@@ -575,6 +586,22 @@ export class LaitContentDragDrop extends UmbElementMixin(LitElement) {
   #showWarn(message: string): void {
     console.warn('[lait-content-drag-drop]', message);
     this.#notifications?.peek('warning', { data: { message } });
+  }
+
+  // Build the human-readable "what moved where" line for the success toast.
+  #movedMessage(sourceName: string, targetName: string, zone: DropZone): string {
+    const where = zone === 'into' ? `into “${targetName}”`
+      : zone === 'before' ? `above “${targetName}”`
+      : `below “${targetName}”`;
+    return `Moved “${sourceName}” ${where}.`;
+  }
+
+  // Transient success toast in the backoffice's bottom-right notification stack
+  // (same UMB_NOTIFICATION_CONTEXT used for the error/warning peeks).
+  #showMoved(sourceName: string, targetName: string, zone: DropZone): void {
+    this.#notifications?.peek('positive', {
+      data: { headline: 'Moved', message: this.#movedMessage(sourceName, targetName, zone) },
+    });
   }
 
   render() { return null; }

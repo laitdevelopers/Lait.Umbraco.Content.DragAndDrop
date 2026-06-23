@@ -101,9 +101,28 @@ export function attachCollectionEntry(entryEl: Element): void {
   try { entryEl.setAttribute('draggable', 'true'); } catch { /* ignore readonly */ }
 }
 
+// Read the display name of a collection entry, best-effort, for the move toast.
+// The name link carries it as a `label`/`name` property (table button / card
+// content node); fall back to its attribute or text content.
+export function resolveCollectionName(entryEl: Element): string | null {
+  let name: string | null = null;
+  walkDescendantsComposed(entryEl, (el) => {
+    if (name) return;
+    const href = el.getAttribute?.('href');
+    if (!href || !parseEditHrefUnique(href)) return;
+    const anyEl = el as Element & { label?: string; name?: string };
+    const candidate =
+      anyEl.label ?? anyEl.name ?? el.getAttribute?.('label') ?? el.getAttribute?.('title') ?? el.textContent ?? '';
+    const trimmed = candidate.trim();
+    if (trimmed) name = trimmed;
+  });
+  return name;
+}
+
 export interface CollectionDragSource {
   el: HTMLElement; // the entry container (for visual feedback)
   unique: string;
+  name: string | null; // display name, for the "moved" feedback toast
 }
 
 // Given a drag event, find the collection entry it started from (if any).
@@ -123,7 +142,7 @@ export function findCollectionDragSource(event: Event): CollectionDragSource | n
   if (!entry || !inCollection) return null;
   const unique = resolveCollectionUnique(entry);
   if (!unique) return null;
-  return { el: entry, unique };
+  return { el: entry, unique, name: resolveCollectionName(entry) };
 }
 
 // Parse the unique of the document whose workspace is currently open from the
