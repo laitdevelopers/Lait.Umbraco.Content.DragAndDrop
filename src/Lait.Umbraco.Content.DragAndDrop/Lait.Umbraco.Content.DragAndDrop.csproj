@@ -52,8 +52,8 @@
   <!-- Build the backoffice client (npm run build) before building this project.
        Skipped during IDE design-time builds to avoid running npm on every keystroke. -->
   <Target Name="BuildBackofficeClient" BeforeTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' And '$(BuildingProject)' == 'true'">
-    <Message Importance="high" Text="Installing backoffice client dependencies (npm install)..." Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules')" />
-    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)\Client" Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules')" />
+    <Message Importance="high" Text="Installing backoffice client dependencies (npm install)..." Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules\.bin')" />
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)\Client" Condition="!Exists('$(MSBuildProjectDirectory)\Client\node_modules\.bin')" />
     <Message Importance="high" Text="Building backoffice client (npm run build)..." />
     <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\Client" />
   </Target>
