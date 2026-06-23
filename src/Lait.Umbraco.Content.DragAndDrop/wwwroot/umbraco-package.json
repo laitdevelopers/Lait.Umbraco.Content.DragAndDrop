@@ -7,9 +7,7 @@
     {
       "name": "Content Drag and Drop",
       "alias": "Lait.Umbraco.Content.DragAndDrop.ContentDragDrop",
+      "author": "Anders Bootsmann",
       "type": "backofficeEntryPoint",
       "js": "/App_Plugins/LaitContentDnd/content-drag-drop.js",
-      "conditions": [{ "alias": "Umb.Condition.SectionAlias", "match": "Umb.Section.Content" }]
-    }
-  ]
-}
+      "conditions": [{ "alias": "Umb.Condition.SectionAlias", "match": "

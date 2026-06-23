@@ -164,6 +164,10 @@ Earlier versions use a different backoffice DOM and Management API and are not s
   gracefully (falls back to a server reload) rather than throwing.
 - `Umbraco.Cms.Core` is pinned to `17.0.0`. Bump to match your exact patch version if a restore complains.
 
+## Author
+
+Anders Bootsmann — [@bootsmann1995](https://github.com/bootsmann1995) · ab@lait.dk
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

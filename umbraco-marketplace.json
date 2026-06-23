@@ -7,9 +7,9 @@
   "LicenseTypes": [ "Free" ],
   "Tags": [ "drag-and-drop", "tree", "collection", "list-view", "backoffice", "editor-tools" ],
   "AuthorDetails": {
-    "Name": "Lait Developers",
-    "Url": "https://github.com/laitdevelopers",
-    "ImageUrl": "https://github.com/laitdevelopers.png",
+    "Name": "Anders Bootsmann",
+    "Url": "https://github.com/bootsmann1995",
+    "ImageUrl": "https://github.com/bootsmann1995.png",
     "SyncContributorsFromRepository": true
   }
 }
